@@ -8,9 +8,16 @@
     
         <label for="image">Select Image</label> 
         <input type="file" name="image">
+        <label for="title">Title</label>
+        <input type="text" name="title">
         
         <button type="submit">Upload Image</button>
     </form>
 
-    
+    {%for image in images %}
+    <h2>{{image.image_title}}</h2>
+    <img src="{{ url_for('send_image', filename=image.image_filename)}}" > 
+
+    {% endfor %}
+ 
 </body>

@@ -1,8 +1,10 @@
 from flask_sqlalchemy import SQLAlchemy
-from gallery import app
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite3'
-db  = SQLAlchemy(app)
+
+db  = SQLAlchemy()
+
+def init_db(app):
+    db = SQLAlchemy(app)
 
 tags = db.Table(
     'tags',
@@ -15,10 +17,15 @@ class Image(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     image_title = db.Column(db.String(120))
-    image_path = db.Column(db.String(200), unique = True, nullable=False)
+    image_filename = db.Column(db.String(200), unique = True, nullable=False)
 
     comments = db.relationship('Comment', backref='image', lazy=True)
     tags = db.relationship('Tag', secondary=tags, lazy='subquery', backref=db.backref('image', lazy=True))
+
+    def __init__(self, title, filename):
+        self.image_title = title
+        self.image_filename = filename
+
 
 class Tag(db.Model):
     __tablename__ = 'Tag'
@@ -30,5 +37,5 @@ class Comment(db.Model):
     __tablename__ = 'Comment'
 
     id = db.Column(db.Integer, primary_key=True)
-    image_id = db.Column(db.Integer, db.ForeignKey('image.id'), nullable=False)
+    image_id = db.Column(db.Integer, db.ForeignKey('Image.id'), nullable=False)
     comment_text = db.Column(db.String(120)) 
