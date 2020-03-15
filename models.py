@@ -1,14 +1,34 @@
 from flask_sqlalchemy import SQLAlchemy
 from gallery import app
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////database.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite3'
 db  = SQLAlchemy(app)
 
+tags = db.Table(
+    'tags',
+    db.Column('tag_id', db.Integer, db.ForeignKey('Tag.id'), primary_key= True), #what it wants is the tablename
+    db.Column('image_id', db.Integer, db.ForeignKey('Image.id'), primary_key=True)
+    )
+
 class Image(db.Model):
-    image_title = db.Column()
+    __tablename__ = 'Image'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    image_title = db.Column(db.String(120))
+    image_path = db.Column(db.String(200), unique = True, nullable=False)
+
+    comments = db.relationship('Comment', backref='image', lazy=True)
+    tags = db.relationship('Tag', secondary=tags, lazy='subquery', backref=db.backref('image', lazy=True))
 
 class Tag(db.Model):
-    tag_name = db.Column()
+    __tablename__ = 'Tag'
+
+    id = db.Column(db.Integer, primary_key=True)
+    tag_name = db.Column(db.String(120), unique=True)
 
 class Comment(db.Model):
-    comment_text = db.Column()
+    __tablename__ = 'Comment'
+
+    id = db.Column(db.Integer, primary_key=True)
+    image_id = db.Column(db.Integer, db.ForeignKey('image.id'), nullable=False)
+    comment_text = db.Column(db.String(120)) 
