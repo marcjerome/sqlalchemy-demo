@@ -1,23 +1,53 @@
-<!DOCTYPE html>
-<head>
-    <title>Cute Animal Gallery</title>
-</head>
+{% extends 'base.html' %}
+{% block content%}
 
-<body>
     <form action="{{ url_for('upload_file')}}" method="POST" enctype="multipart/form-data"> 
     
         <label for="image">Select Image</label> 
         <input type="file" name="image">
         <label for="title">Title</label>
         <input type="text" name="title">
-        
+        <br>
+        {% for tag in tags %}
+            <input type="checkbox" name="tag" value="{{tag.tag_name}}">{{tag.tag_name}}
+            <br>
+        {% endfor %}
+
         <button type="submit">Upload Image</button>
     </form>
 
-    {%for image in images %}
-    <h2>{{image.image_title}}</h2>
-    <img src="{{ url_for('send_image', filename=image.image_filename)}}" > 
 
+
+    <form action="{{ url_for('add_tag')}}", method="POST">
+        <input type="text" name="tag_name"> 
+        <input type="submit" name="add_tag" value="Add Tag">
+    </form>
+
+    {%for image in images %}
+        <h2>{{image.image_title}}</h2> 
+
+        {% for tag in image.tags%}
+            <p>{{tag.tag_name}}</p>
+        {% endfor %}
+
+        <form action="{{url_for('edit_title', filename=image.image_filename)}}", method="POST">
+            <input type="submit" name="change_page" value="Change title">
+        </form>
+
+        <img src="{{ url_for('send_image', filename=image.image_filename)}}"> 
+        
+        <form action="{{ url_for('delete_image', filename=image.image_filename) }}" method="POST">
+            <button type="submit" name="delete">Delete</button>
+        </form>
+
+        {% for comment in image.comments %}
+           <p>{{comment.comment_text}}</p> <a href="">edit</a>
+        {% endfor %}
+
+        <form action="{{ url_for('add_comment', filename=image.image_filename)}}" method="POST">
+            <input type="text" name="comment_text">
+            <button type="submit" name="add_comment">Add Comment</button>
+        </form>
     {% endfor %}
  
-</body>
+{% endblock %}
