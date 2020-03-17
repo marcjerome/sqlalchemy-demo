@@ -20,7 +20,7 @@ class Image(db.Model):
     image_filename = db.Column(db.String(200), unique = True, nullable=False)
 
     comments = db.relationship('Comment', cascade='all,delete', backref='image', lazy=True)
-    tags = db.relationship('Tag', cascade='all,delete',  secondary=tags, lazy='subquery', backref=db.backref('image', lazy=True))
+    tags = db.relationship('Tag', secondary=tags, lazy='subquery', backref=db.backref('image', lazy=True))
 
     def __init__(self, title, filename):
         self.image_title = title

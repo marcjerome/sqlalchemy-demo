@@ -1,0 +1,43 @@
+{%extends 'base.html' %}
+{%block content%}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-6 text-right">
+        <h1 class="">{{ image.image_title}}</h1>
+        </div>
+        <div class="col-6 text-left">
+            <form action="{{url_for('edit_title', filename=image.image_filename)}}", method="POST">
+                <input class="btn btn-info" type="submit" name="change_page" value="Change title">
+            </form>
+        </div>
+        <div class="col-12 text-center mb-3">
+            {% for tag in image.tags%}
+                <span style="text-decoration: underline;">{{tag.tag_name}}</span> 
+            {% endfor %}
+        </div>
+        <div class="col-12 text-center">
+        <img class="" src="{{ url_for('send_image', filename=image.image_filename)}}" style="height: 350px; width: 360px;"/>
+         </div>
+    </div>
+
+    <div class="row mt-4 justify-content-center">
+                
+        {% for comment in image.comments %}
+            <div class="col-12 text-center">
+                <p> "{{comment.comment_text}}" </p> <!--<a href="">edit</a>-->
+            </div>
+            
+        {% endfor %}
+    </div>
+
+
+    <div class="row mt-3 justify-content-center">
+        <form action="{{ url_for('add_comment', filename=image.image_filename)}}" method="POST">
+            <input type="text" name="comment_text">
+            <button type="submit" name="add_comment">Add Comment</button>
+        </form>
+    </div>
+
+
+</div>
+{%endblock%}

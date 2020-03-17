@@ -73,7 +73,7 @@ def add_comment(filename):
             image.comments.append(Comment(comment_text))
             db.session.add(image)
             db.session.commit()
-            return redirect(url_for('index'))
+            return redirect(url_for('animal_page', filename=image.image_filename))
 
 
 @app.route('/image/edittitle/<filename>', methods=['POST', 'GET'])
@@ -109,3 +109,8 @@ def index():
     images = Image.query.all()
     tags = Tag.query.all()
     return render_template('index.html', images=images, tags=tags)
+
+@app.route('/image/<filename>')
+def animal_page(filename):
+    image = Image.query.filter_by(image_filename=filename).first()
+    return render_template('animal_page.html', image=image )
